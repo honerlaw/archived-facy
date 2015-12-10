@@ -1,0 +1,50 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "outDir": "../",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "filesGlob": [
+        "ts/**/*.ts",
+        "ts/**/*.tsx",
+        "!node_modules/**"
+    ],
+    "files": [
+        "ts/action/Action.ts",
+        "ts/action/ActionDispatcher.ts",
+        "ts/action/ActionListener.ts",
+        "ts/typing/app-state.d.ts",
+        "ts/typing/box-container-props.d.ts",
+        "ts/typing/content-state.d.ts",
+        "ts/typing/login-state.d.ts",
+        "ts/typing/nav-state.d.ts",
+        "ts/typing/register-state.d.ts",
+        "ts/typing/user-box-props.d.ts",
+        "ts/util/ApiRequest.ts",
+        "ts/util/AppData.ts",
+        "ts/App.tsx",
+        "ts/auth/Login.tsx",
+        "ts/auth/Register.tsx",
+        "ts/Content.tsx",
+        "ts/content/search/box/UserBox.tsx",
+        "ts/content/search/BoxContainer.tsx",
+        "ts/Nav.tsx"
+    ],
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    },
+    "compileOnSave": false,
+    "buildOnSave": false
+}

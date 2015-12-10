@@ -1,0 +1,141 @@
+
+
+$blue: #2980b9;
+
+body {
+    background-color: #fafafa;
+}
+
+label {
+    display: block;
+    font-weight: normal;
+    font-size: 1rem;
+    text-transform: uppercase;
+}
+
+input {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 1px solid #afafaf;
+    background-color: white;
+    font-size: 1.4rem;
+    padding: .5rem;
+    margin: 0 0 .5rem 0;
+    width: 100%;
+    border-radius: .2rem;
+    &[type="submit"] {
+        width: auto;
+        float: right;
+        color: white;
+        background-color: #333;
+        border: none;
+        font-size: 1.2rem;
+        padding: .5rem 2rem;
+        -webkit-transition: opacity 200ms ease-in-out;
+        &:hover {
+            opacity: .7;
+        }
+    }
+}
+
+footer {
+    text-align: center;
+    height: 10rem;
+    line-height: 10rem;
+    font-size: 1rem;
+    color: #afafaf;
+}
+
+#app-nav {
+    margin-top: 1rem;
+    #profile-picture {
+        width: 100%;
+        height: 200px;
+        background-color: #efefef;
+        margin: 1rem 0;
+        border-radius: .2rem;
+        overflow: hidden;
+    }
+    #name {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        margin: 2rem 0;
+    }
+    #nav-links {
+        margin: 0 .5rem;
+        label {
+            font-size: 1rem;
+            padding: 2rem 0 1rem 0;
+            font-weight: bold;
+            margin: 0;
+        }
+        a {
+            display: block;
+            width: 100%;
+            padding: .2rem 0 .2rem .5rem;
+            margin: 0;
+            text-transform: lowercase;
+            font-size: 1.2rem;
+        }
+    }
+}
+
+.box-container {
+    h3 {
+        font-size: 2.4rem;
+        margin: 3rem 0 1rem 2rem;
+        padding: 0;
+        text-transform: lowercase;
+        color: #34495e;
+    }
+}
+
+.content-user-box {
+    background-color: white;
+    box-shadow: 0 1px 1px #afafaf;
+    margin: .5rem;
+    border-radius: .1rem;
+    overflow: hidden;
+    height: 50px;
+    line-height: 50px;
+    .profile-picture {
+        height: 50px;
+        width: 50px;
+        background-color: #efefef;
+        overflow: hidden;
+        float: left;
+    }
+    .name {
+        height: 50px;
+        line-height: 50px;
+        width: auto;
+        float: left;
+        text-transform: uppercase;
+        text-align: center;
+        font-size: 1rem;
+        margin-left: 1rem;
+    }
+    .options {
+        height: 50px;
+        line-height: 50px;
+        float: right;
+        width: auto;
+        position: relative;
+        select {
+            height: auto;
+            line-height: normal;
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: $blue;
+            color: white;
+            border: none;
+            outline: none;
+            padding: .3rem 0;
+            text-transform: uppercase;
+            font-size: 1rem;
+            border-radius: .2rem;
+            overflow: hidden;
+        }
+    }
+}

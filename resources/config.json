@@ -1,0 +1,15 @@
+{
+	"database" : {
+		"url" : "",
+		"user" : "",
+		"password" : "",
+		"driver_class" : "org.postgresql.Driver"
+	},
+	"jwt" : {
+		"keyStore" : {
+			"path" : "keystore.jceks",
+			"type" : "jceks",
+			"password" : "secret"
+		}
+	}
+}
