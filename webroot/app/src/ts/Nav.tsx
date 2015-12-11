@@ -4,6 +4,7 @@ import { ApiRequest } from "./util/ApiRequest";
 import { Action } from "./action/Action";
 import { ActionDispatcher } from "./action/ActionDispatcher";
 import { ActionListener } from "./action/ActionListener";
+import { ProfileData } from "./nav/ProfileData";
 
 /**
  * This component is all about handling the navigation system and basically
@@ -114,8 +115,7 @@ export class Nav extends React.Component<any, NavState> implements ActionListene
     public render() {
         return (<div id="app-nav">
             <input type="text" placeholder="Search" onKeyUp={ e => this.search(e) } />
-            <div id="profile-picture"></div>
-            <div id="name">{ this.state.username }</div>
+            <ProfileData profileId={ this.state.profileId } username={ this.state.username } created={ this.state.created } />
             <div id="nav-links">
                 <label>Friends</label>
                 <a href="#" onClick={ e => this.friendsList(e) }>All <i>{ this.state.friends.length }</i></a>

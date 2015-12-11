@@ -1,5 +1,7 @@
 package io.honerlaw.facy.controller;
 
+import java.util.Set;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import io.honerlaw.facy.Controller;
@@ -10,6 +12,7 @@ import io.vertx.ext.auth.jwt.JWTOptions;
 import io.vertx.ext.jdbc.JDBCClient;
 import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLConnection;
+import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.JWTAuthHandler;
@@ -24,12 +27,15 @@ public class User extends Controller {
 	public void register(Router router) {
 		// mark the routes that are protected
 		router.route("/user/profile").handler(JWTAuthHandler.create(getJWTAuth()));
+		router.route("/user/profile/upload").handler(JWTAuthHandler.create(getJWTAuth()));
 		
 		// creates a new user
 		router.post("/user/create").handler(this::create);
 		
 		// view the current user's profile
 		router.get("/user/profile").handler(this::profile);
+		
+		router.post("/user/profile/upload").handler(this::upload);
 	}
 	
 	private void create(RoutingContext ctx) {
@@ -145,6 +151,50 @@ public class User extends Controller {
 			}
 		});
 		
+	}
+	
+	private void upload(RoutingContext ctx) {
+		
+		// okay so what we are going to do here is a little weird but simple
+		
+		/*
+		 * We have a directory called uploads. inside of that directory we have two directories (for now)
+		 * -temp = holds all of the files that are initially uploaded
+		 * -profile = holds the profile images after they have been processed and removed from the temp directory
+		 */
+		long uid = ctx.user().principal().getLong("id");
+		Set<FileUpload> files = ctx.fileUploads();
+		files.forEach(file -> {			
+			ctx.vertx().fileSystem().readFile(file.uploadedFileName(), res -> {
+				if(res.succeeded()) {
+					
+					ctx.vertx().fileSystem().writeFile("webroot/file/image/profile/" + Long.toString(uid), res.result(), writeRes -> {
+						if(writeRes.succeeded()) {
+							
+							ctx.vertx().fileSystem().delete(file.uploadedFileName(), deleteRes -> {
+								if(deleteRes.succeeded()) {
+									
+									JsonObject resp = new JsonObject().put("url", "file/image/profile/" + uid);
+									ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(resp.toString());
+									
+								} else {
+									deleteRes.cause().printStackTrace();
+									ctx.response().setStatusCode(500).setStatusMessage("Failed to upload file.").end();
+								}
+							});
+						} else {
+							writeRes.cause().printStackTrace();
+							ctx.response().setStatusCode(500).setStatusMessage("Failed to upload file.").end();
+						}
+					});
+					
+				} else {
+					res.cause().printStackTrace();
+					ctx.response().setStatusCode(500).setStatusMessage("Failed to upload file.").end();
+				}
+			});
+
+		});
 	}
 
 }

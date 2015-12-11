@@ -1,0 +1,4 @@
+
+interface ProfileDataState {
+    profileImage: string
+}

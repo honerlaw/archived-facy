@@ -1,8 +1,8 @@
-/// <reference path="../../../typing/user-box-props.d.ts" />
 
 import { Action } from "../../../action/Action";
 import { ActionDispatcher } from "../../../action/ActionDispatcher";
 import { ApiRequest } from "../../../util/ApiRequest";
+import { UserBoxProps } from "./UserBoxProps";
 
 /**
  * Shows a box displaying information about a user
@@ -19,31 +19,31 @@ export class UserBox extends React.Component<UserBoxProps, {}> {
     private option(event) {
         switch(event.target.value) {
             case 'send':
-                ApiRequest.sendFriendRequest(this.props.data.id, function(data, textStatus, xhr) {
+                ApiRequest.sendFriendRequest(this.props.id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
                 });
                 break;
             case 'remove':
-                ApiRequest.removeFriend(this.props.data.id, function(data, textStatus, xhr) {
+                ApiRequest.removeFriend(this.props.id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriends"));
                 });
                 break;
             case 'revoke':
-                ApiRequest.revokeFriendRequest(this.props.data.friend_request_id, function(data, textStatus, xhr) {
+                ApiRequest.revokeFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
                 });
                 break;
             case 'accept':
-                ApiRequest.acceptFriendRequest(this.props.data.friend_request_id, function(data, textStatus, xhr) {
+                ApiRequest.acceptFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
                 });
                 break;
             case 'deny':
-                ApiRequest.denyFriendRequest(this.props.data.friend_request_id, function(data, textStatus, xhr) {
+                ApiRequest.denyFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
                 });
@@ -73,9 +73,10 @@ export class UserBox extends React.Component<UserBoxProps, {}> {
                 <option value="deny">Deny Friend Request</option>
             </select>);
         }
+
         return (<div className="col-md-12 content-user-box">
-            <div className="profile-picture"></div>
-            <div className="name">{ this.props.data.username }</div>
+            <div className="profile-picture" style={ { backgroundImage: 'url("' + this.props.profileImage + '")' } }></div>
+            <div className="name">{ this.props.username }</div>
             <div className="options">
                 { options }
             </div>
