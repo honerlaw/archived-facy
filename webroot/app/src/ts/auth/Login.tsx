@@ -1,10 +1,11 @@
 
-import { AppData } from "../util/AppData";
-import { ApiRequest } from "../util/ApiRequest";
 import { Action } from "../action/Action";
 import { ActionDispatcher } from "../action/ActionDispatcher";
+import { User } from "../data/model/User";
+import { LoginAction } from "../action/impl/LoginAction";
+import { ILoginState } from "./ILoginState";
 
-export class Login extends React.Component<any, LoginState> {
+export class Login extends React.Component<any, ILoginState> {
 
     constructor(props : any) {
         super(props);
@@ -16,12 +17,8 @@ export class Login extends React.Component<any, LoginState> {
 
     private onSubmit(event) {
         event.preventDefault();
-        var self = this;
-        ApiRequest.newToken(this.state, function(data) {
-            if(data.token) {
-                AppData.setToken(data.token);
-                ActionDispatcher.dispatch(new Action("login"));
-            }
+        User.get(this.state.username, this.state.password, function() {
+            ActionDispatcher.dispatch(new LoginAction());
         });
     }
 
@@ -34,7 +31,7 @@ export class Login extends React.Component<any, LoginState> {
     }
 
     public render() {
-        return (<div className="col-md-4">
+        return (<div className="col-md-3">
             <form onSubmit={ e => this.onSubmit(e) }>
             <h1>Login</h1>
             <label>username</label>

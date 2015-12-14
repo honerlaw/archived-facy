@@ -1,5 +1,6 @@
+
 import { Action } from "./Action";
 
 export interface ActionListener {
-    performed: (action: Action) => any;
+    performed: (action: Action, result: any) => void;
 }

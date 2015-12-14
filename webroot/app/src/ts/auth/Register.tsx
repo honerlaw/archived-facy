@@ -1,10 +1,10 @@
 
-import { AppData } from "../util/AppData";
-import { ApiRequest } from "../util/ApiRequest";
-import { Action } from "../action/Action";
 import { ActionDispatcher } from "../action/ActionDispatcher";
+import { User } from "../data/model/User";
+import { LoginAction } from "../action/impl/LoginAction";
+import { IRegisterState } from "./IRegisterState";
 
-export class Register extends React.Component<any, RegisterState> {
+export class Register extends React.Component<any, IRegisterState> {
 
     constructor(props : any) {
         super(props);
@@ -18,11 +18,8 @@ export class Register extends React.Component<any, RegisterState> {
     private onSubmit(event) {
         event.preventDefault();
         var self = this;
-        ApiRequest.createUser(this.state, function(data) {
-            if(data.token) {
-                AppData.setToken(data.token);
-                ActionDispatcher.dispatch(new Action("login"));
-            }
+        User.create(this.state.username, this.state.password, this.state.verifyPassword, function() {
+            ActionDispatcher.dispatch(new LoginAction());
         });
     }
 
@@ -39,7 +36,7 @@ export class Register extends React.Component<any, RegisterState> {
     }
 
     public render() {
-        return (<div className="col-md-4">
+        return (<div className="col-md-3">
             <form onSubmit={ e => this.onSubmit(e) }>
                 <h1>Register</h1>
                 <label>username</label>

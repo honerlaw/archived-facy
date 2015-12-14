@@ -1,15 +1,17 @@
-/// <reference path="../typing/profile-data-props.d.ts" />
-/// <reference path="../typing/profile-data-state.d.ts" />
 
-import { ApiRequest } from "../util/ApiRequest";
-import { AppData } from "../util/AppData";
+import { AppData } from "../data/AppData";
+import { ApiRequest } from "../data/ApiRequest";
 
-export class ProfileData extends React.Component<ProfileDataProps, ProfileDataState> {
+interface ProfileDataState {
+    profileImage: string
+}
 
-    constructor(props: ProfileDataProps) {
+export class ProfileData extends React.Component<any, ProfileDataState> {
+
+    constructor(props: any) {
         super(props);
         this.state = {
-            profileImage: ''
+            profileImage: AppData.getUser().getProfileImage()
         }
     }
 
@@ -29,44 +31,32 @@ export class ProfileData extends React.Component<ProfileDataProps, ProfileDataSt
             data.append(key, value);
         });
 
-        // send the request to the server
-        $.ajax({
-            url: '/api/user/profile/upload',
-            type: 'POST',
-            data: data,
-            cache: false,
-            contentType: false,
-            processData: false,
-            beforeSend: function(request) {
-                if(AppData.getToken() !== undefined) {
-                    request.setRequestHeader("Authorization", "Bearer " + AppData.getToken());
-                }
-            },
-            success: function(data, textStatus, xhr) {
-                this.setState({
-                    profileImage: data.url + "?uuid=" + Math.random()
-                });
-            }.bind(this),
-            error: function(xhr, data, status) {
-                console.log(xhr, data, status);
-            }
-        });
+        // send file upload request
+        ApiRequest.fileUpload('/api/user/profile/upload', data, function(data, status, xhr) {
+            AppData.getUser().setProfileImage(data.url + "?uuid=" + Math.random());
+            this.setState({
+                profileImage: AppData.getUser().getProfileImage()
+            });
+        }.bind(this));
+
     }
 
     public render() {
-        var url = this.state.profileImage;
-        if(this.state.profileImage.length === 0 && this.props.profileId !== -1) {
-            url = '/file/image/profile/' + this.props.profileId;
-        }
-        var profileImage = {
-            backgroundImage: 'url("' + url + '")'
-        };
         return (<div>
-            <div id="profile-picture" style={ profileImage } >
-                <div id="update-profile-img-button" onClick={ e => this.selectImage(e) }>update</div>
-            </div>
-            <div id="name">{ this.props.username }</div>
+            { this.getProfileImage() }
+            <div id="name">{ AppData.getUser().getUsername() }</div>
             <input type="file" name="upload-file" style={ { display: 'none' } } ref="profileUploadInput" onChange={ e => this.upload(e) } />
+        </div>);
+    }
+
+    private getProfileImage() {
+        if(this.state.profileImage !== null) {
+            return (<div id="profile-picture" style={ { backgroundImage: 'url("' + this.state.profileImage + '")' }} >
+                <div id="update-profile-img-button" onClick={ e => this.selectImage(e) }>update</div>
+            </div>);
+        }
+        return (<div id="profile-picture">
+            <div id="update-profile-img-button" onClick={ e => this.selectImage(e) }>update</div>
         </div>);
     }
 

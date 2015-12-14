@@ -1,7 +1,7 @@
 
 import { Action } from "../../../action/Action";
 import { ActionDispatcher } from "../../../action/ActionDispatcher";
-import { ApiRequest } from "../../../util/ApiRequest";
+import { ApiRequest } from "../../../data/ApiRequest";
 import { UserBoxProps } from "./UserBoxProps";
 
 /**
@@ -19,34 +19,34 @@ export class UserBox extends React.Component<UserBoxProps, {}> {
     private option(event) {
         switch(event.target.value) {
             case 'send':
-                ApiRequest.sendFriendRequest(this.props.id, function(data, textStatus, xhr) {
+                /*ApiRequest.sendFriendRequest(this.props.id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
-                });
+                });*/
                 break;
             case 'remove':
-                ApiRequest.removeFriend(this.props.id, function(data, textStatus, xhr) {
+                /*ApiRequest.removeFriend(this.props.id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriends"));
-                });
+                });*/
                 break;
             case 'revoke':
-                ApiRequest.revokeFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
+                /*ApiRequest.revokeFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
-                });
+                });*/
                 break;
             case 'accept':
-                ApiRequest.acceptFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
+                /*ApiRequest.acceptFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
-                });
+                });*/
                 break;
             case 'deny':
-                ApiRequest.denyFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
+                /*ApiRequest.denyFriendRequest(this.props.friend_request_id, function(data, textStatus, xhr) {
                     ActionDispatcher.dispatch(new Action("reloadSearch"));
                     ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
-                });
+                });*/
                 break;
         }
     }

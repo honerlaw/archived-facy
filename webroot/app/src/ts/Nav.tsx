@@ -1,27 +1,27 @@
 
-import { AppData } from "./util/AppData";
-import { ApiRequest } from "./util/ApiRequest";
-import { Action } from "./action/Action";
-import { ActionDispatcher } from "./action/ActionDispatcher";
-import { ActionListener } from "./action/ActionListener";
+import { AppData } from "./data/AppData";
+import { ApiRequest } from "./data/ApiRequest";
+
 import { ProfileData } from "./nav/ProfileData";
 
-/**
- * This component is all about handling the navigation system and basically
- * sending out actions when specific actions by the user are done (e.g. if
- * the user clicks on list friends then we upload the content panel with
- * a list of friends)
- */
-export class Nav extends React.Component<any, NavState> implements ActionListener {
+import { ActionDispatcher } from "./action/ActionDispatcher";
+import { ActionListener } from "./action/ActionListener";
+import { Action } from "./action/Action";
+import { LogoutAction } from "./action/impl/LogoutAction";
+import { RefreshFriendsAction } from "./action/impl/RefreshFriendsAction";
+import { RefreshFriendRequestsAction} from "./action/impl/RefreshFriendRequestsAction";
 
-    private query: string = '';
+import { INavState } from "./INavState";
+
+/**
+ * Handles navigation of the application (as well as requesting data / dispatching
+ * actions when needed)
+ */
+export class Nav extends React.Component<any, INavState> implements ActionListener {
 
     constructor(props : any) {
         super(props);
         this.state = {
-            profileId: -1,
-            username: '',
-            created: '',
             friends: [],
             invites: [],
             requests: []
@@ -34,95 +34,78 @@ export class Nav extends React.Component<any, NavState> implements ActionListene
      */
     private componentWillMount() {
         ActionDispatcher.register(this);
-        ActionDispatcher.dispatch(new Action("reloadProfile"));
-        ActionDispatcher.dispatch(new Action("reloadFriends"));
-        ActionDispatcher.dispatch(new Action("reloadFriendRequests"));
+        AppData.getUser().getFriends();
+        AppData.getUser().getFriendRequests();
     }
 
+    /**
+     * Deregister the action listener from the action dispatcher
+     */
     private componentWillUnmount() {
         ActionDispatcher.deregister(this);
     }
 
+    /**
+     * Do a search request
+     */
     private search(event) {
-        this.query = event.target.value;
-        ActionDispatcher.dispatch(new Action("reloadSearch"));
+        ApiRequest.search(event.target.value);
     }
 
-    private friendsList(event) {
+    /**
+     * Load friends list
+     */
+    private friends(event) {
         event.preventDefault();
-        ActionDispatcher.dispatch(new Action("friendList", this.state.friends));
+        AppData.getUser().getFriends();
     }
 
-    private friendsInvite(event) {
+    /**
+     * Sends request to reload friend requests
+     */
+    private invites(event) {
         event.preventDefault();
-        ActionDispatcher.dispatch(new Action("friendInvites", this.state.invites));
+        AppData.getUser().getFriendRequests();
     }
 
-    private friendsRequests(event) {
+    /**
+     * Sends request to reload friend invites
+     */
+    private requests(event) {
         event.preventDefault();
-        ActionDispatcher.dispatch(new Action("friendRequests", this.state.requests));
+        AppData.getUser().getFriendRequests();
     }
 
-    private circlesCreate(event) {
-        event.preventDefault();
-        ActionDispatcher.dispatch(new Action("circleCreate"));
-    }
-
+    /**
+     * Sends request to log user out of the application
+     */
     private logout(event) {
         event.preventDefault();
-        AppData.setToken(null);
-        ActionDispatcher.dispatch(new Action("logout"));
+        ActionDispatcher.dispatch(new LogoutAction());
     }
 
-    public performed(action: Action) {
-        var self = this;
-        switch(action.getType()) {
-            case "reloadSearch":
-                if(this.query.length == 0) {
-                    return;
-                }
-                ApiRequest.search(this.query, function(data, textStatus, xhr) {
-                    ActionDispatcher.dispatch(new Action("searchResults", data));
-                });
-                break;
-            case "reloadFriends":
-                ApiRequest.getFriends(function(data, textStatus, xhr) {
-                    self.setState({
-                        friends: data.friends
-                    });
-                });
-                break;
-            case "reloadFriendRequests":
-                ApiRequest.getFriendRequests(function(data, textStatus, xhr) {
-                    self.setState({
-                        invites: data.invites,
-                        requests: data.requests
-                    });
-                });
-                break;
-            case "reloadProfile":
-                ApiRequest.getProfile(function(data, textStatus, xhr) {
-                    self.setState({
-                        profileId: data.id,
-                        username: data.username,
-                        created: data.created
-                    });
-                });
-                break;
+    /**
+     * Intercept dispatched actions and handle them appropriately
+     */
+    public performed(action: Action, result: any) {
+        if(action instanceof RefreshFriendsAction || action instanceof RefreshFriendRequestsAction) {
+            this.setState(result);
         }
     }
 
+    /**
+     * Render the view for the navigation menu
+     */
     public render() {
         return (<div id="app-nav">
             <input type="text" placeholder="Search" onKeyUp={ e => this.search(e) } />
-            <ProfileData profileId={ this.state.profileId } username={ this.state.username } created={ this.state.created } />
+            <ProfileData />
             <div id="nav-links">
                 <label>Friends</label>
-                <a href="#" onClick={ e => this.friendsList(e) }>All <i>{ this.state.friends.length }</i></a>
-                <a href="#" onClick={ e => this.friendsInvite(e) }>Invites <i>{ this.state.invites.length }</i></a>
-                <a href="#" onClick={ e => this.friendsRequests(e) }>Requests <i>{ this.state.requests.length }</i></a>
+                <a href="#" onClick={ e => this.friends(e) }>All <i>{ this.state.friends.length }</i></a>
+                <a href="#" onClick={ e => this.invites(e) }>Invites <i>{ this.state.invites.length }</i></a>
+                <a href="#" onClick={ e => this.requests(e) }>Requests <i>{ this.state.requests.length }</i></a>
                 <label>Circles</label>
-                <a href="#" onClick={ e => this.circlesCreate(e) }>Create</a>
                 <label>Settings</label>
                 <a href="#" onClick={ e => this.logout(e) }>Logout</a>
             </div>

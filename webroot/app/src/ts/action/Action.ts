@@ -1,18 +1,18 @@
 
 
-export class Action {
+/*
+ * Basically we have an abstract function we need to handle
+ * The response of an action gets broadcast and the state is set for whatever
+ */
+export abstract class Action {
 
-    private type: string;
     private data: any;
 
-    constructor(type: string, data?: any) {
-        this.type = type;
+    constructor(data?: any) {
         this.data = data;
     }
 
-    public getType(): string {
-        return this.type;
-    }
+    abstract process(): any;
 
     public getData(): any {
         return this.data;

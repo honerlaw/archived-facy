@@ -1,27 +1,29 @@
 
+import { AppData } from "../AppData";
 import { ApiRequest } from "../ApiRequest";
 
-export class Token extends ApiRequest {
+/**
+ * A simple wrapper class around localStorage that allows us to retreive /
+ * set / generate a token
+ */
+export class Token {
 
-    constructor(token?: string) {
-        super();
-        if(token !== undefined) {
-            localStorage.setItem("token", token);
+    public setValue(value: string) {
+        if(value !== undefined) {
+            localStorage.setItem("token", value);
         }
     }
 
-    public static new(username: string, password: string, callback: (token: Token) => any): void {
-        this.request("/api/token/new", "post", { username: username, password: password }, function(data, status, xhr) {
-            callback(new Token(data.token));
-        });
-    }
-
-    public getToken(): string {
-        var token: string = localStorage.getItem("token");
-        if(token === null) {
+    public getValue(): string {
+        var value: string = localStorage.getItem("token");
+        if(value === null) {
             return undefined;
         }
-        return token;
+        return value;
+    }
+
+    public isValid(): boolean {
+        return this.getValue() !== undefined;
     }
 
     public remove() {

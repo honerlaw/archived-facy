@@ -1,6 +1,5 @@
 /// <reference path="../../typing/box-container-props.d.ts" />
 
-
 import { UserBox } from "./box/UserBox";
 
 export class BoxContainer extends React.Component<BoxContainerProps, {}> {
@@ -21,17 +20,18 @@ export class BoxContainer extends React.Component<BoxContainerProps, {}> {
             {data.map(function(data) {
                 switch(type) {
                     case 0:
-                        return <UserBox type={'user'} data={data} />;
+                        //return <UserBox type={'user'} data={data} />;
                     case 1:
-                        return <UserBox type={'friend'} data={data} />;
+                        //return <UserBox type={'friend'} data={data} />;
                     case 2:
-                        return <UserBox type={'invite'} data={data} />;
+                        //return <UserBox type={'invite'} data={data} />;
                     case 3:
-                        return <UserBox type={'request'} data={data} />;
+                        //return <UserBox type={'request'} data={data} />;
+                        return;
                 }
             })}
         </div>);
     }
-    
+
 
 }

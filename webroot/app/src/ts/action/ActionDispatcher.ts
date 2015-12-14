@@ -20,8 +20,9 @@ export class ActionDispatcher {
     }
 
     public static dispatch(action: Action) {
+        var result: Object = action.process(); // process the action
         for(var i: number = 0; i < ActionDispatcher.listeners.length; ++i) {
-            ActionDispatcher.listeners[i].performed(action);
+            ActionDispatcher.listeners[i].performed(action, result);
         }
     }
 

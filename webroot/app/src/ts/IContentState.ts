@@ -1,5 +1,5 @@
 
-interface ContentState {
+export interface IContentState {
     friends?: Array<any>,
     invites?: Array<any>,
     requests?: Array<any>,

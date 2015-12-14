@@ -15,4 +15,12 @@ export class AppData {
         return this.token;
     }
 
+    public static setUser(user: User) {
+        this.user = user;
+    }
+
+    public static getUser(): User {
+        return this.user;
+    }
+
 }

@@ -61,11 +61,11 @@ public class FriendRequest extends Controller {
 				SQLConnection con = res.result();
 				
 				// get list of sent friend requests
-				con.queryWithParams("SELECT id as friend_request_id FROM friend_requests WHERE requestor_id = ?", new JsonArray().add(uid), requestRes -> {
+				con.queryWithParams("SELECT friend_requests.id as friend_request_id, users.id, users.username, users.profile_image, users.created FROM friend_requests JOIN users ON users.id = friend_requests.requestee_id WHERE requestor_id = ?", new JsonArray().add(uid), requestRes -> {
 					if(requestRes.succeeded()) {
 						
 						// get list of received friend requests
-						con.queryWithParams("SELECT id as friend_request_id FROM friend_requests WHERE requestee_id = ?", new JsonArray().add(uid), inviteRes -> {
+						con.queryWithParams("SELECT friend_requests.id as friend_request_id, users.id, users.username, users.profile_image, users.created FROM friend_requests JOIN users ON users.id = friend_requests.requestor_id WHERE requestee_id = ?", new JsonArray().add(uid), inviteRes -> {
 							if(inviteRes.succeeded()) {
 
 								// send out repsonse

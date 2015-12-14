@@ -1,25 +1,6 @@
 /// <reference path="../typings/tsd.d.ts" />
 /// <reference path="../typings/react/react-global.d.ts" />
 /// <reference path="../typings/requirejs/require.d.ts" />
-/// <reference path="./typing/app-state.d.ts" />
-
-/*
-
-Basically we have 3 interfaces per component
-
-Structure Interface - defines the structure / data in the interface
-Properties Interface - defines the immutable properties of the component - set by parent for child
-State Interface - defines the state of the component - basically things that can change
-
-So we have 2 sections to the website.
-
-right nav / info panel
-
-left content panel
-
-The content panel basically takes care of a lot of shit and is updated a lot
-
-*/
 
 require('../scss/index.scss');
 
@@ -27,22 +8,36 @@ import { Nav } from "./Nav.tsx";
 import { Content } from "./Content.tsx";
 import { Login } from "./auth/Login.tsx";
 import { Register } from "./auth/Register.tsx";
-import { AppData } from "./util/AppData";
+
+import { User } from "./data/model/User";
+import { AppData } from "./data/AppData";
+
 import { Action } from "./action/Action";
 import { ActionListener } from "./action/ActionListener";
 import { ActionDispatcher } from "./action/ActionDispatcher";
+import { LogoutAction } from "./action/impl/LogoutAction";
+import { LoginAction } from "./action/impl/LoginAction";
 
-class App extends React.Component<any, AppState> implements ActionListener {
+import { IAppState } from "./IAppState";
+
+class App extends React.Component<any, IAppState> implements ActionListener {
 
     constructor(props : any) {
         super(props);
         this.state = {
-            isLoggedIn: AppData.getToken() === undefined ? false : true
+            isLoggedIn: false
         };
     }
 
     public componentWillMount() {
         ActionDispatcher.register(this);
+        if(AppData.getToken().isValid()) {
+            User.load(function() {
+                this.setState({
+                    isLoggedIn: AppData.getToken().isValid()
+                });
+            }.bind(this));
+        }
     }
 
     public componentWillUnmount() {
@@ -57,21 +52,18 @@ class App extends React.Component<any, AppState> implements ActionListener {
             </div>);
         }
         return (<div className="container">
+            <div className="col-md-12"><div id="login-page-header"></div></div>
             <div className="col-md-2"></div>
             <Register />
+            <div className="col-md-2"></div>
             <Login />
             <div className="col-md-2"></div>
         </div>);
     }
 
-    public performed(action: Action) {
-        switch(action.getType()) {
-            case "login":
-                this.setState({ isLoggedIn: true });
-                break;
-            case "logout":
-                this.setState({ isLoggedIn: false });
-                break;
+    public performed(action: Action, result: any): void {
+        if(action instanceof LogoutAction || action instanceof LoginAction) {
+            this.setState(result);
         }
     }
 

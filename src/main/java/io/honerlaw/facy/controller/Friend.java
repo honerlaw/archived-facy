@@ -45,7 +45,7 @@ public class Friend extends Controller {
 				
 				// select all of the user's friends
 				SQLConnection con = res.result();
-				con.queryWithParams("SELECT friends.id as id, users.id as friendsId, users.username FROM friends JOIN users ON users.id = friends.friends_id WHERE users_id = ?", new JsonArray().add(uid), queryRes -> {
+				con.queryWithParams("SELECT friends.id as friend_id, users.id as id, users.username, users.profile_image, users.created FROM friends JOIN users ON users.id = friends.friends_id WHERE users_id = ?", new JsonArray().add(uid), queryRes -> {
 					if(queryRes.succeeded()) {
 						
 						// get the list of friends

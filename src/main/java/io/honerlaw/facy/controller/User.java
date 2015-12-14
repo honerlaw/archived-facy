@@ -88,18 +88,30 @@ public class User extends Controller {
 									// successfully inserted the one user
 									if(insertRes.result().getUpdated() == 1) {
 										
-										// generate a token
-										String token = getJWTAuth().generateToken(new JsonObject().put("id", insertRes.result().getKeys().getInteger(0)), new JWTOptions());
+										long id = insertRes.result().getKeys().getLong(0);
 										
-										// send out the token to the user
-										ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(new JsonObject().put("token", token).toString());
+										// generate a token
+										final String token = getJWTAuth().generateToken(new JsonObject().put("id", id), new JWTOptions());
+										
+										// get the user's information
+										con.queryWithParams("SELECT id, username, profile_image, created FROM users WHERE id = ?", new JsonArray().add(id), selectRes -> {
+											if(selectRes.succeeded()) {
+												JsonObject data = selectRes.result().getRows().get(0).put("token", token);
+												ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(data.toString());
+											} else {
+												selectRes.cause().printStackTrace();
+											}
+											con.close();
+										});
+										
 									} else {
 										ctx.response().setStatusCode(500).setStatusMessage("Failed to create new user.").end();
+										con.close();
 									}
 								} else {
 									ctx.response().setStatusCode(500).setStatusMessage("Failed to create new user.").end();
+									con.close();
 								}
-								con.close();
 							});
 						} else {
 							ctx.response().setStatusCode(409).setStatusMessage("Username already in use.").end();
@@ -131,7 +143,7 @@ public class User extends Controller {
 			if(res.succeeded()) {
 				
 				SQLConnection con = res.result();
-				con.queryWithParams("SELECT id, username, created FROM users WHERE id = ?", new JsonArray().add(uid), queryRes -> {
+				con.queryWithParams("SELECT id, username, profile_image, created FROM users WHERE id = ?", new JsonArray().add(uid), queryRes -> {
 					if(queryRes.succeeded()) {
 						ResultSet set = queryRes.result();
 						if(set.getNumRows() == 1) {
@@ -164,18 +176,55 @@ public class User extends Controller {
 		 */
 		long uid = ctx.user().principal().getLong("id");
 		Set<FileUpload> files = ctx.fileUploads();
-		files.forEach(file -> {			
+		files.forEach(file -> {
+			
+			// make sure the content type is an image
+			if(!file.contentType().startsWith("image")) {
+				return;
+			}
+			
+			// read the file data from the temporary upload file directory
 			ctx.vertx().fileSystem().readFile(file.uploadedFileName(), res -> {
 				if(res.succeeded()) {
 					
+					// move the temporary file into image webroot directory
 					ctx.vertx().fileSystem().writeFile("webroot/file/image/profile/" + Long.toString(uid), res.result(), writeRes -> {
 						if(writeRes.succeeded()) {
 							
+							// delete the temporary file
 							ctx.vertx().fileSystem().delete(file.uploadedFileName(), deleteRes -> {
 								if(deleteRes.succeeded()) {
 									
-									JsonObject resp = new JsonObject().put("url", "file/image/profile/" + uid);
-									ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(resp.toString());
+									// get the database connection
+									getClient().getConnection(conRes -> {
+										if(conRes.succeeded()) {
+											SQLConnection con = conRes.result();
+											
+											// update the url in the database with the user image url path
+											con.updateWithParams("UPDATE users SET profile_image = ? WHERE id = ?", new JsonArray().add("/file/image/profile/" + uid).add(uid), updateRes -> {
+												if(updateRes.succeeded()) {
+													
+													// make sure we successfully updated the user
+													if(updateRes.result().getUpdated() == 1) {
+														
+														// respond with the url location
+														JsonObject resp = new JsonObject().put("url", "/file/image/profile/" + uid);
+														ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(resp.toString());
+													} else {
+														ctx.response().setStatusCode(500).setStatusMessage("Failed to upload file.").end();
+													}
+													
+												} else {
+													updateRes.cause().printStackTrace();
+													ctx.response().setStatusCode(500).setStatusMessage("Failed to upload file.").end();
+												}
+												con.close();
+											});
+											
+										} else {
+											ctx.response().setStatusCode(500).setStatusMessage("Failed to upload file.").end();
+										}
+									});
 									
 								} else {
 									deleteRes.cause().printStackTrace();
