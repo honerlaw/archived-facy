@@ -8,4 +8,5 @@ webroot/app/src/typings/
 webroot/app/bundle.js
 webroot/app/css/
 webroot/app/src/.sass-cache
+webroot/file/
 file-uploads/
