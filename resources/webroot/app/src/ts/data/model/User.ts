@@ -41,7 +41,7 @@ export class User {
     /**
      * Gets a user's information given their password and username (basically login)
      */
-    public static get(username: string, password: string, callback: () => any): void {
+    public static get(username: string, password: string, callback: (user: User) => any): void {
         ApiRequest.request("/api/token/new", "post", { username: username, password: password }, function(data, status, xhr) {
             AppData.getToken().setValue(data.token);
             User.load(callback);
@@ -51,13 +51,15 @@ export class User {
     /**
      * Load the data about the current logged in user
      */
-    public static load(callback: () => any) {
+    public static load(callback: (user: User) => any) {
         if(!AppData.getToken().isValid()) {
             throw new Error("Token must be set to load user information.");
         }
         ApiRequest.request("/api/user/profile", "get", {}, function(data, status, xhr) {
             AppData.setUser(User.parse(data));
-            callback();
+            callback(AppData.getUser());
+        }, function(xhr, status, error) {
+            callback(null);
         });
     }
 

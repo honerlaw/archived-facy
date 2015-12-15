@@ -1,12 +1,10 @@
 
-import { AppData } from "../data/AppData";
-import { ApiRequest } from "../data/ApiRequest";
+import { AppData } from "../../data/AppData";
+import { ApiRequest } from "../../data/ApiRequest";
 
-interface ProfileDataState {
-    profileImage: string
-}
+import { IProfileDataState } from "./IProfileDataState";
 
-export class ProfileData extends React.Component<any, ProfileDataState> {
+export class ProfileData extends React.Component<any, IProfileDataState> {
 
     constructor(props: any) {
         super(props);

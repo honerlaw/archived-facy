@@ -13,10 +13,10 @@ export class Friend {
         this.user = user;
     }
 
-    public remove() {
+    public remove(callback: (user: User) => any) {
         ApiRequest.request("/api/friend/delete/" + this.user.getID(), "delete", {}, function(data, status, xhr) {
-
-        });
+            callback(this.getUser());
+        }.bind(this));
     }
 
     public getID(): number {

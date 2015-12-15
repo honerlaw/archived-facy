@@ -1,12 +1,12 @@
 
-import { Action } from "../action/Action";
-import { ActionListener } from "../action/ActionListener";
-import { ActionDispatcher } from "../action/ActionDispatcher";
-import { SearchResultAction } from "../action/impl/SearchResultAction";
+import { Action } from "../../action/Action";
+import { ActionListener } from "../../action/ActionListener";
+import { ActionDispatcher } from "../../action/ActionDispatcher";
+import { SearchResultAction } from "../../action/impl/SearchResultAction";
 
 import { ISearchContainerState } from "./ISearchContainerState";
 
-import { UserBox } from "./search/box/UserBox";
+import { UserBox } from "./user/UserBox";
 
 export class SearchContainer extends React.Component<any, ISearchContainerState> implements ActionListener {
 
@@ -48,22 +48,22 @@ export class SearchContainer extends React.Component<any, ISearchContainerState>
                 { resultLabel }
                 { this.getLabel('users', this.state.users) }
                 { this.state.users.map(function(user) {
-                    return <UserBox type="user" id={user.getID()} username={user.getUsername()} profileImage={user.getProfileImage()} />
+                    return <UserBox model={user} />
                 }) }
                 <div style={ { clear: "both" } }></div>
                 { this.getLabel('invites', this.state.invites) }
                 { this.state.invites.map(function(invite) {
-                    return <UserBox type="friend" id={invite.getRequestee().getID()} username={invite.getRequestee().getUsername()} profileImage={invite.getRequestee().getProfileImage()} />
+                    return <UserBox model={invite} />
                 }) }
                 <div style={ { clear: "both" } }></div>
                 { this.getLabel('requests', this.state.requests) }
                 { this.state.requests.map(function(request) {
-                    return <UserBox type="friend" id={request.getRequestor().getID()} username={request.getRequestor().getUsername()} profileImage={request.getRequestor().getProfileImage()} />
+                    return <UserBox model={request} />
                 }) }
                 <div style={ { clear: "both" } }></div>
                 { this.getLabel('friends', this.state.friends) }
                 { this.state.friends.map(function(friend) {
-                    return <UserBox type="friend" id={friend.getUser().getID()} username={friend.getUser().getUsername()} profileImage={friend.getUser().getProfileImage()} />
+                    return <UserBox model={friend}/>
                 }) }
             </div>
         </div>);

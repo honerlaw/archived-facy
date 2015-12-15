@@ -74,8 +74,8 @@ public class Search extends Controller {
 											} else {
 												ctx.response().setStatusCode(500).setStatusMessage("Searching failed.").end();
 												userRes.cause().printStackTrace();
-												con.close();
 											}
+											con.close();
 										});
 										
 									} else {
@@ -98,43 +98,6 @@ public class Search extends Controller {
 						con.close();
 					}
 				});
-				
-				
-				/*con.queryWithParams("SELECT users.id, users.username, users.profile_image, users.created, friends.id as friend_id, friends.users_id as friend_user_id, friend_requests.id as friend_request_id, friend_requests.requestor_id as friend_requestor_id, friend_requests.requestee_id as friend_requestee_id FROM users LEFT JOIN friends ON friends.friends_id = users.id LEFT JOIN friend_requests ON friend_requests.requestor_id = users.id OR friend_requests.requestee_id = users.id WHERE username LIKE ? and users.id != ?", new JsonArray().add(query).add(uid), queryRes -> {
-					if(queryRes.succeeded()) {
-						ResultSet set = queryRes.result();
-						
-						// store the different types of accounts
-						List<JsonObject> users = new ArrayList<JsonObject>();
-						List<JsonObject> friends = new ArrayList<JsonObject>();
-						List<JsonObject> invites = new ArrayList<JsonObject>();
-						List<JsonObject> requests = new ArrayList<JsonObject>();
-						
-						// sort all of the results into the correct groups
-						set.getRows().forEach(row -> {							
-							if(row.getLong("friend_user_id") != null && row.getLong("friend_user_id") == uid) {
-								friends.add(row);
-							} else if(row.getLong("friend_requestor_id") != null && row.getLong("friend_requestor_id") == uid) {
-								requests.add(row);
-							} else if(row.getLong("friend_requestee_id") != null && row.getLong("friend_requestee_id") == uid) {
-								invites.add(row);
-							} else {
-								users.add(row);
-							}
-						});
-						
-						// build and send the response
-						JsonObject resp = new JsonObject()
-								.put("friends", new JsonArray(friends))
-								.put("requests", new JsonArray(requests))
-								.put("invites", new JsonArray(invites))
-								.put("users", new JsonArray(users));
-						ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(resp.toString());
-					} else {
-						queryRes.cause().printStackTrace();
-					}
-					con.close();
-				});*/
 			
 			} else {
 				ctx.response().setStatusCode(500).setStatusMessage("Searching failed.").end();

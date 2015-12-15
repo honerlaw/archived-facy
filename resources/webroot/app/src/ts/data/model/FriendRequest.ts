@@ -1,6 +1,8 @@
 
 import { User } from "./User";
+import { Friend } from "./Friend";
 import { ApiRequest } from "../ApiRequest";
+import { AppData } from "../AppData";
 
 export class FriendRequest {
 
@@ -16,28 +18,28 @@ export class FriendRequest {
         this.requestor = requestor;
     }
 
-    public static send(userId: number) {
+    public static create(userId: number, callback: (request: FriendRequest) => void) {
         ApiRequest.request("/api/friend/request/send/" + userId, "post", {}, function(data, status, xhr) {
-            // convert the returned data into a new friend request data block
+            callback(new FriendRequest(data.request.friend_request_id, User.parse(data.request), AppData.getUser()));
         });
     }
 
-    public revoke(callback: () => any) {
+    public revoke(callback: (user: User) => any) {
         ApiRequest.request("/api/friend/request/revoke/" + this.id, "delete", {}, function(data, status, xhr) {
-            callback();
-        });
+            callback(this.getRequestee());
+        }.bind(this));
     }
 
-    public accept(callback: () => any) {
+    public accept(callback: (friend: Friend) => any) {
         ApiRequest.request("/api/friend/request/accept/" + this.id, "post", {}, function(data, status, xhr) {
-            callback();
-        });
+            callback(new Friend(data.friend.friend_id, User.parse(data.friend)));
+        }.bind(this));
     }
 
-    public deny(callback: () => any) {
+    public deny(callback: (user: User) => any) {
         ApiRequest.request("/api/friend/request/deny/" + this.id, "delete", {}, function(data, status, xhr) {
-            callback();
-        });
+            callback(this.getRequestor());
+        }.bind(this));
     }
 
     public getID(): number {

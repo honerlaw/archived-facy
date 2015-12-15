@@ -36,7 +36,7 @@ export class Register extends React.Component<any, IRegisterState> {
     }
 
     public render() {
-        return (<div className="col-md-3">
+        return (<div id="register-form">
             <form onSubmit={ e => this.onSubmit(e) }>
                 <h1>Register</h1>
                 <label>username</label>

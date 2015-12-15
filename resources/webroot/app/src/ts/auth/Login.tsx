@@ -31,7 +31,7 @@ export class Login extends React.Component<any, ILoginState> {
     }
 
     public render() {
-        return (<div className="col-md-3">
+        return (<div id="login-form">
             <form onSubmit={ e => this.onSubmit(e) }>
             <h1>Login</h1>
             <label>username</label>

@@ -135,15 +135,27 @@ public class FriendRequest extends Controller {
 									con.updateWithParams("INSERT INTO friend_requests (requestor_id, requestee_id) VALUES (?, ?)", new JsonArray().add(uid).add(fid), insertRes -> {
 										if(insertRes.succeeded()) {
 											if(insertRes.result().getUpdated() == 1) {
-												ctx.response().setStatusCode(201).setStatusMessage("Created").end();
+
+												con.queryWithParams("SELECT friend_requests.id as friend_request_id, users.id, users.username, users.profile_image, users.created FROM friend_requests JOIN users ON users.id = friend_requests.requestee_id WHERE friend_requests.id = ?", new JsonArray().add(insertRes.result().getKeys().getLong(0)), selectRes -> {
+													if(selectRes.succeeded()) {
+														JsonObject resp = new JsonObject().put("request", selectRes.result().getRows().get(0));
+														ctx.response().setStatusCode(201).setStatusMessage("Created").putHeader("content-type", "application/json").end(resp.toString());
+													} else {
+														selectRes.cause().printStackTrace();
+														ctx.response().setStatusCode(400).setStatusMessage("Failed to send friend request.").end();
+													}
+													con.close();
+												});
+												
 											} else {
 												ctx.response().setStatusCode(400).setStatusMessage("Failed to send friend request.").end();
+												con.close();
 											}
 										} else {
 											insertRes.cause().printStackTrace();
 											ctx.response().setStatusCode(500).setStatusMessage("Failed to send friend request.").end();
+											con.close();
 										}
-										con.close();
 									});
 									
 								} else {
@@ -217,9 +229,25 @@ public class FriendRequest extends Controller {
 													// make sure we only deleted one row and added 2 rows
 													if(deleteRes.result().getUpdated() == 1 && insertRes.result().getUpdated() == 2) {
 														
-														// commit the changes on success
-														con.commit(commitRes -> {
-															ctx.response().setStatusCode(201).setStatusMessage("Created").end();
+														// get the data we inserted
+														con.queryWithParams("SELECT friends.id as friend_id, users.id, users.username, users.profile_image, users.created FROM users JOIN friends ON friends.friends_id = users.id WHERE users_id = ? AND friends_id = ?", new JsonArray().add(uid).add(fid), friendRes -> {
+															if(friendRes.succeeded()) {
+																
+																// commit the changes on success
+																con.commit(commitRes -> {
+																	if(commitRes.succeeded()) {
+																		JsonObject resp = new JsonObject().put("friend", friendRes.result().getRows().get(0));
+																		ctx.response().setStatusCode(201).setStatusMessage("Created").putHeader("content-type", "application/json").end(resp.toString());
+																	} else {
+																		commitRes.cause().printStackTrace();
+																	}
+																	con.close();
+																});
+																
+															} else {
+																friendRes.cause().printStackTrace();
+																con.close();
+															}
 														});
 														
 													} else {

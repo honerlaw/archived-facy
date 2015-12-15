@@ -1,23 +1,22 @@
 
-import { AppData } from "./data/AppData";
-import { ApiRequest } from "./data/ApiRequest";
+import { AppData } from "../data/AppData";
+import { ApiRequest } from "../data/ApiRequest";
 
-import { ProfileData } from "./nav/ProfileData";
+import { ActionDispatcher } from "../action/ActionDispatcher";
+import { ActionListener } from "../action/ActionListener";
+import { Action } from "../action/Action";
+import { LogoutAction } from "../action/impl/LogoutAction";
+import { RefreshFriendsAction } from "../action/impl/RefreshFriendsAction";
+import { RefreshFriendRequestsAction} from "../action/impl/RefreshFriendRequestsAction";
 
-import { ActionDispatcher } from "./action/ActionDispatcher";
-import { ActionListener } from "./action/ActionListener";
-import { Action } from "./action/Action";
-import { LogoutAction } from "./action/impl/LogoutAction";
-import { RefreshFriendsAction } from "./action/impl/RefreshFriendsAction";
-import { RefreshFriendRequestsAction} from "./action/impl/RefreshFriendRequestsAction";
-
-import { INavState } from "./INavState";
+import { INavPanelState } from "./INavPanelState";
+import { ProfileData } from "./profile/ProfileData";
 
 /**
  * Handles navigation of the application (as well as requesting data / dispatching
  * actions when needed)
  */
-export class Nav extends React.Component<any, INavState> implements ActionListener {
+export class NavPanel extends React.Component<any, INavPanelState> implements ActionListener {
 
     constructor(props : any) {
         super(props);

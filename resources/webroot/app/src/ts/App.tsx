@@ -1,43 +1,39 @@
 /// <reference path="../typings/tsd.d.ts" />
 /// <reference path="../typings/react/react-global.d.ts" />
 /// <reference path="../typings/requirejs/require.d.ts" />
+/// <reference path="../typings/react-router/react-router.d.ts" />
 
 require('../scss/index.scss');
 
-import { Nav } from "./Nav.tsx";
-import { Content } from "./Content.tsx";
+import { NavPanel } from "./nav/NavPanel.tsx";
+import { ContentPanel } from "./content/ContentPanel.tsx";
 import { Login } from "./auth/Login.tsx";
 import { Register } from "./auth/Register.tsx";
 
 import { User } from "./data/model/User";
 import { AppData } from "./data/AppData";
 
-import { Action } from "./action/Action";
-import { ActionListener } from "./action/ActionListener";
-import { ActionDispatcher } from "./action/ActionDispatcher";
 import { LogoutAction } from "./action/impl/LogoutAction";
 import { LoginAction } from "./action/impl/LoginAction";
 
 import { IAppState } from "./IAppState";
+import { IAppProps } from "./IAppProps";
 
-class App extends React.Component<any, IAppState> implements ActionListener {
+import { Action } from "./action/Action";
+import { ActionDispatcher } from "./action/ActionDispatcher";
+import { ActionListener } from "./action/ActionListener";
 
-    constructor(props : any) {
+class App extends React.Component<IAppProps, IAppState> implements ActionListener {
+
+    constructor(props : IAppProps) {
         super(props);
         this.state = {
-            isLoggedIn: false
+            isLoggedIn: this.props.isLoggedIn
         };
     }
 
     public componentWillMount() {
         ActionDispatcher.register(this);
-        if(AppData.getToken().isValid()) {
-            User.load(function() {
-                this.setState({
-                    isLoggedIn: AppData.getToken().isValid()
-                });
-            }.bind(this));
-        }
     }
 
     public componentWillUnmount() {
@@ -46,18 +42,18 @@ class App extends React.Component<any, IAppState> implements ActionListener {
 
     public render() {
         if(this.state.isLoggedIn) {
-            return (<div className="container">
-                <div className="col-md-10"><Content /></div>
-                <div className="col-md-2"><Nav /></div>
+            return (<div id="app-page">
+                <ContentPanel />
+                <NavPanel />
+                <footer>{ '\u00A9 2015 honerlaw.io' }</footer>
             </div>);
         }
-        return (<div className="container">
-            <div className="col-md-12"><div id="login-page-header"></div></div>
-            <div className="col-md-2"></div>
+        return (<div id="login-register-page">
+            <div id="login-page-header"></div>
             <Register />
-            <div className="col-md-2"></div>
             <Login />
-            <div className="col-md-2"></div>
+            <div style={{clear: "both"}}></div>
+            <footer>{ '\u00A9 2015 honerlaw.io' }</footer>
         </div>);
     }
 
@@ -66,7 +62,14 @@ class App extends React.Component<any, IAppState> implements ActionListener {
             this.setState(result);
         }
     }
+    
 
 }
 
-ReactDOM.render(<App />, document.getElementsByClassName('app')[0]);
+if(AppData.getToken().isValid()) {
+    User.load(function(user: User) {
+        ReactDOM.render(<App isLoggedIn={ user === null ? false : true } />, document.getElementsByClassName('app')[0]);
+    });
+} else {
+    ReactDOM.render(<App isLoggedIn={false} />, document.getElementsByClassName('app')[0]);
+}
