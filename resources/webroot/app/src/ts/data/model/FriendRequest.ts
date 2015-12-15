@@ -40,6 +40,16 @@ export class FriendRequest {
         });
     }
 
+    public getID(): number {
+        return this.id;
+    }
 
+    public getRequestee(): User {
+        return this.requestee;
+    }
+
+    public getRequestor(): User {
+        return this.requestor;
+    }
 
 }

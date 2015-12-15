@@ -48,7 +48,7 @@ public class Server extends AbstractVerticle {
 		Router router = Router.router(getVertx()).mountSubRouter("/api", api);
 		
 		// add a static handler
-		router.route().handler(StaticHandler.create().setFilesReadOnly(false).setCachingEnabled(false));
+		router.route().handler(StaticHandler.create().setWebRoot("resources/webroot").setFilesReadOnly(false).setCachingEnabled(false));
 		
 		// start the server and set the router
 		getVertx().createHttpServer().requestHandler(router::accept).listen(8080);

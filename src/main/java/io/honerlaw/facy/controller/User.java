@@ -166,14 +166,6 @@ public class User extends Controller {
 	}
 	
 	private void upload(RoutingContext ctx) {
-		
-		// okay so what we are going to do here is a little weird but simple
-		
-		/*
-		 * We have a directory called uploads. inside of that directory we have two directories (for now)
-		 * -temp = holds all of the files that are initially uploaded
-		 * -profile = holds the profile images after they have been processed and removed from the temp directory
-		 */
 		long uid = ctx.user().principal().getLong("id");
 		Set<FileUpload> files = ctx.fileUploads();
 		files.forEach(file -> {
@@ -188,7 +180,7 @@ public class User extends Controller {
 				if(res.succeeded()) {
 					
 					// move the temporary file into image webroot directory
-					ctx.vertx().fileSystem().writeFile("webroot/file/image/profile/" + Long.toString(uid), res.result(), writeRes -> {
+					ctx.vertx().fileSystem().writeFile("resources/webroot/file/image/profile/" + Long.toString(uid), res.result(), writeRes -> {
 						if(writeRes.succeeded()) {
 							
 							// delete the temporary file

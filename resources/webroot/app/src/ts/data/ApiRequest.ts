@@ -16,6 +16,7 @@ export class ApiRequest {
 
     public static search(query: string): void {
         if(query.length === 0) {
+            ActionDispatcher.dispatch(new SearchResultAction([], [], [], []));
             return;
         }
         ApiRequest.request('/api/search', 'get', { query : query}, function(data, textStatus, xhr) {

@@ -120,53 +120,78 @@ footer {
     }
 }
 
-.content-user-box {
-    background-color: white;
-    box-shadow: 0 1px 1px #afafaf;
-    margin: .5rem;
-    border-radius: .1rem;
-    overflow: hidden;
-    height: 50px;
-    line-height: 50px;
-    .profile-picture {
-        height: 50px;
-        width: 50px;
-        background-color: #efefef;
+#search-result-container {
+    width: 100%;
+    label {
+        margin: .5rem 0 0 0;
+        padding: .5rem;
+        color: white;
+        background-color: transparent;
+        border-bottom: 1px dashed #afafaf;
+        border-radius: .2rem;
         overflow: hidden;
-        float: left;
-        background-size: cover;
-        background-position: center;
+        color: black;
+        &#search-result-label {
+            padding: 1rem .5rem;
+            background-color: transparent;
+            border-bottom: none;
+            div {
+                display: inline-block;
+                float: right;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
     }
-    .name {
+    .content-user-box {
+        background-color: white;
+        margin: .5rem 0 0 0;
+        overflow: hidden;
         height: 50px;
         line-height: 50px;
-        width: auto;
-        float: left;
-        text-transform: uppercase;
-        text-align: center;
-        font-size: 1rem;
-        margin-left: 1rem;
-    }
-    .options {
-        height: 50px;
-        line-height: 50px;
-        float: right;
-        width: auto;
-        position: relative;
-        select {
-            height: auto;
-            line-height: normal;
-            -webkit-appearance: none;
-            appearance: none;
-            background-color: $blue;
-            color: white;
-            border: none;
-            outline: none;
-            padding: .3rem 0;
-            text-transform: uppercase;
-            font-size: 1rem;
-            border-radius: .2rem;
+        margin-bottom: 1px;
+        border-radius: .2rem;
+        .profile-picture {
+            height: 50px;
+            width: 50px;
+            background-color: #efefef;
             overflow: hidden;
+            float: left;
+            background-size: cover;
+            background-position: center;
+        }
+        .name {
+            height: 50px;
+            line-height: 50px;
+            width: auto;
+            float: left;
+            text-transform: uppercase;
+            text-align: center;
+            font-size: 1rem;
+            margin-left: 1rem;
+        }
+        .options {
+            height: 50px;
+            line-height: 50px;
+            float: right;
+            width: auto;
+            position: relative;
+            select {
+                height: auto;
+                line-height: normal;
+                -webkit-appearance: none;
+                appearance: none;
+                background-color: $blue;
+                color: white;
+                border: none;
+                outline: none;
+                padding: .3rem;
+                text-transform: uppercase;
+                font-size: 1rem;
+                border-radius: .2rem;
+                overflow: hidden;
+            }
         }
     }
 }

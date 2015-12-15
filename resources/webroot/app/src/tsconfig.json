@@ -31,6 +31,7 @@
         "ts/action/impl/SearchResultAction.ts",
         "ts/auth/ILoginState.ts",
         "ts/auth/IRegisterState.ts",
+        "ts/content/ISearchContainerState.ts",
         "ts/content/search/box/UserBoxProps.ts",
         "ts/data/ApiRequest.ts",
         "ts/data/AppData.ts",
@@ -48,6 +49,7 @@
         "ts/Content.tsx",
         "ts/content/search/box/UserBox.tsx",
         "ts/content/search/BoxContainer.tsx",
+        "ts/content/SearchContainer.tsx",
         "ts/Nav.tsx",
         "ts/nav/ProfileData.tsx"
     ],

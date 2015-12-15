@@ -2,9 +2,8 @@
 import { Action } from "./action/Action";
 import { ActionListener } from "./action/ActionListener";
 import { ActionDispatcher } from "./action/ActionDispatcher";
-import { SearchResultAction } from "./action/impl/SearchResultAction";
 
-import { BoxContainer } from "./content/search/BoxContainer";
+import { SearchContainer } from "./content/SearchContainer";
 
 import { IContentState } from "./IContentState";
 
@@ -43,17 +42,12 @@ export class Content extends React.Component<any, IContentState> implements Acti
 
     public render() {
         return (<div>
-            <BoxContainer title={"Users"} type={0} data={this.state.users} />
-            <BoxContainer title={"Friends"} type={1} data={this.state.friends} />
-            <BoxContainer title={"Invites"} type={2} data={this.state.invites} />
-            <BoxContainer title={"Requests"} type={3} data={this.state.requests} />
+            <SearchContainer />
         </div>);
     }
 
     public performed(action: Action, result: any) {
-        if(action instanceof SearchResultAction) {
-            this.setState(result);
-        }
+
     }
 
 }

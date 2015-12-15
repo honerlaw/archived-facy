@@ -3,10 +3,10 @@
 .settings/
 .vertx/
 target/
-webroot/app/src/node_modules/
-webroot/app/src/typings/
-webroot/app/bundle.js
-webroot/app/css/
-webroot/app/src/.sass-cache
-webroot/file/
+resources/webroot/app/src/node_modules/
+resources/webroot/app/src/typings/
+resources/webroot/app/bundle.js
+resources/webroot/app/css/
+resources/webroot/app/src/.sass-cache
+resources/webroot/file/
 file-uploads/
