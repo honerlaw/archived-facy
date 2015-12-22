@@ -1,6 +1,7 @@
 
 import { AppData } from "../data/AppData";
 import { ApiRequest } from "../data/ApiRequest";
+import { Circle } from "../data/model/Circle";
 
 import { ActionDispatcher } from "../action/ActionDispatcher";
 import { ActionListener } from "../action/ActionListener";
@@ -9,6 +10,7 @@ import { LogoutAction } from "../action/impl/LogoutAction";
 import { RefreshFriendsAction } from "../action/impl/RefreshFriendsAction";
 import { RefreshFriendRequestsAction} from "../action/impl/RefreshFriendRequestsAction";
 import { PageRequestAction, PageData } from "../action/impl/PageRequestAction";
+import { RefreshCirclesAction } from "../action/impl/RefreshCirclesAction";
 
 import { INavPanelState } from "./INavPanelState";
 import { ProfileData } from "./profile/ProfileData";
@@ -24,7 +26,8 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
         this.state = {
             friends: [],
             invites: [],
-            requests: []
+            requests: [],
+            circles: []
         };
     }
 
@@ -36,6 +39,7 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
         ActionDispatcher.register(this);
         AppData.getUser().getFriends();
         AppData.getUser().getFriendRequests();
+        AppData.getUser().getCircles();
     }
 
     /**
@@ -65,8 +69,8 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
      */
     private invites(event) {
         event.preventDefault();
+        ActionDispatcher.dispatch(new PageRequestAction(new PageData('invites', this.state.invites)));
         AppData.getUser().getFriendRequests();
-        ActionDispatcher.dispatch(new PageRequestAction(new PageData('invites')));
     }
 
     /**
@@ -74,8 +78,8 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
      */
     private requests(event) {
         event.preventDefault();
+        ActionDispatcher.dispatch(new PageRequestAction(new PageData('requests', this.state.requests)));
         AppData.getUser().getFriendRequests();
-        ActionDispatcher.dispatch(new PageRequestAction(new PageData('requests')));
     }
 
     /**
@@ -98,7 +102,7 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
      * Intercept dispatched actions and handle them appropriately
      */
     public performed(action: Action, result: any) {
-        if(action instanceof RefreshFriendsAction || action instanceof RefreshFriendRequestsAction) {
+        if(action instanceof RefreshFriendsAction || action instanceof RefreshFriendRequestsAction || action instanceof RefreshCirclesAction) {
             this.setState(result);
         }
     }
@@ -107,10 +111,6 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
      * Render the view for the navigation menu
      */
     public render() {
-        var circles;
-        if(this.state.friends.length > 0 ) {
-            circles = <a href="#" onClick={ e => this.friends(e) }>Friends <i>{ this.state.friends.length }</i></a>;
-        }
         return (<div id="app-nav">
             <ProfileData />
             <input type="text" placeholder="Search" onKeyUp={ e => this.search(e) } />
@@ -119,11 +119,25 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
                 <a href="#" onClick={ e => this.invites(e) }>Invites <i>{ this.state.invites.length }</i></a>
                 <a href="#" onClick={ e => this.requests(e) }>Requests <i>{ this.state.requests.length }</i></a>
                 <label>Circles<a href="#" onClick={ e => this.createCircle(e) }>+</a></label>
-                { circles }
+                { this.showCircles() }
                 <label>Settings</label>
                 <a href="#" onClick={ e => this.logout(e) }>Logout</a>
             </div>
         </div>);
+    }
+
+    private showCircles() {
+        var defaults;
+        if(this.state.friends.length > 0 ) {
+            defaults = <a href="#" onClick={ e => this.friends(e) }>Friends <i>{ this.state.friends.length }</i></a>;
+        }
+        return (<div>
+            { defaults }
+            { this.state.circles.map(function(circle: Circle) {
+                return <a href="#">{ circle.getTitle() }</a>;
+            })}
+        </div>);
+
     }
 
 }

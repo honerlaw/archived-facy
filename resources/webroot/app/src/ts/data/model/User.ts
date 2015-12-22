@@ -1,11 +1,13 @@
 
 import { Friend } from "./Friend";
 import { FriendRequest } from "./FriendRequest";
+import { Circle } from "./Circle";
 import { ApiRequest } from "../ApiRequest";
 import { AppData } from "../AppData";
 import { ActionDispatcher } from "../../action/ActionDispatcher";
 import { RefreshFriendsAction } from "../../action/impl/RefreshFriendsAction";
 import { RefreshFriendRequestsAction } from "../../action/impl/RefreshFriendRequestsAction";
+import { RefreshCirclesAction } from "../../action/impl/RefreshCirclesAction";
 
 export class User {
 
@@ -97,6 +99,22 @@ export class User {
             ActionDispatcher.dispatch(new RefreshFriendRequestsAction(requests, invites));
             if(callback !== undefined) {
                 callback(requests, invites);
+            }
+        });
+    }
+
+    /**
+     * Get a list of circles that the user has created
+     */
+    public getCircles(callback?: (circles: Array<Circle>) => any) {
+        ApiRequest.request("/api/circle", "get", {}, function(data, status, xhr) {
+            var circles: Array<Circle> = [];
+            data.circles.forEach(function(circle) {
+                circles.push(new Circle(circle.id, circle.title, circle.description, circle.created, AppData.getUser()));
+            });
+            ActionDispatcher.dispatch(new RefreshCirclesAction(circles));
+            if(callback !== undefined) {
+                callback(circles);
             }
         });
     }

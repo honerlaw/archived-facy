@@ -47,10 +47,10 @@ public class Circle extends Controller {
 				
 				// find all circles
 				SQLConnection con = res.result();
-				con.queryWithParams("SELECT * FROM circles WHERE users_id = ?", new JsonArray().add(uid), queryRes -> {
+				con.queryWithParams("SELECT circles.id, circles.title, circles.description, circles.created FROM circles WHERE users_id = ?", new JsonArray().add(uid), queryRes -> {
 					if(queryRes.succeeded()) {
 						JsonObject resp = new JsonObject().put("circles", new JsonArray(queryRes.result().getRows()));
-						ctx.response().setStatusCode(200).setStatusMessage("OK").end(resp.toString());
+						ctx.response().setStatusCode(200).setStatusMessage("OK").putHeader("content-type", "application/json").end(resp.toString());
 					} else {
 						queryRes.cause().printStackTrace();
 						ctx.response().setStatusCode(500).setStatusMessage("Failed to retrieve circles.").end();
@@ -74,7 +74,7 @@ public class Circle extends Controller {
 		JsonObject obj = ctx.getBodyAsJson();
 		
 		// make sure they passed a valid circle title
-		if(!obj.containsKey("title") || obj.getString("title").length() == 0 || obj.getString("title").length() > 150 || !obj.getString("title").matches("[a-zA-Z0-9 _'\"]")) {
+		if(!obj.containsKey("title") || obj.getString("title").length() == 0 || obj.getString("title").length() > 150 || !obj.getString("title").matches("[a-zA-Z0-9 _'\"]+")) {
 			ctx.response().setStatusCode(400).setStatusMessage("Invalid circle title.").end();
 			return;
 		}
@@ -82,15 +82,31 @@ public class Circle extends Controller {
 		// get the user id who is creating the circle
 		long uid = ctx.user().principal().getLong("id");
 		
+		// get the information we are inserting into the database
+		String title = obj.getString("title").trim();
+		String description = obj.getString("description").trim().length() == 0 ? null : obj.getString("description").trim();
+		
 		// get the database connection
 		getClient().getConnection(res -> {
 			if(res.succeeded()) {
 				
 				// insert the circle to be created
 				SQLConnection con = res.result();
-				con.updateWithParams("INSERT INTO circles (users_id, title) VALUES (?, ?)", new JsonArray().add(uid).add(obj.getString("title")), insertRes -> {
+				con.updateWithParams("INSERT INTO circles (users_id, title, description) VALUES (?, ?, ?)", new JsonArray().add(uid).add(title).add(description), insertRes -> {
 					if(insertRes.succeeded()) {
-						ctx.response().setStatusCode(200).setStatusMessage("OK").end();
+						
+						// create a json object containing the circle data
+						JsonObject circle = new JsonObject()
+								.put("id", insertRes.result().getKeys().getLong(0))
+								.put("title", title)
+								.put("description", description)
+								.put("users_id", uid);
+						
+						// create the response object with the circle object as the payload
+						JsonObject resp = new JsonObject().put("circle", circle);
+						
+						// send out the response
+						ctx.response().setStatusCode(201).setStatusMessage("Created").putHeader("content-type", "application/json").end(resp.toString());
 					} else {
 						res.cause().printStackTrace();
 						ctx.response().setStatusCode(500).setStatusMessage("Failed to create circle.").end();
