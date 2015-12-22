@@ -8,6 +8,7 @@ import { Action } from "../action/Action";
 import { LogoutAction } from "../action/impl/LogoutAction";
 import { RefreshFriendsAction } from "../action/impl/RefreshFriendsAction";
 import { RefreshFriendRequestsAction} from "../action/impl/RefreshFriendRequestsAction";
+import { PageRequestAction, PageData } from "../action/impl/PageRequestAction";
 
 import { INavPanelState } from "./INavPanelState";
 import { ProfileData } from "./profile/ProfileData";
@@ -65,6 +66,7 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
     private invites(event) {
         event.preventDefault();
         AppData.getUser().getFriendRequests();
+        ActionDispatcher.dispatch(new PageRequestAction(new PageData('invites')));
     }
 
     /**
@@ -73,6 +75,15 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
     private requests(event) {
         event.preventDefault();
         AppData.getUser().getFriendRequests();
+        ActionDispatcher.dispatch(new PageRequestAction(new PageData('requests')));
+    }
+
+    /**
+     * Sends request to view the request circle page
+     */
+    private createCircle(event) {
+        event.preventDefault();
+        ActionDispatcher.dispatch(new PageRequestAction(new PageData('createCircle')));
     }
 
     /**
@@ -96,15 +107,19 @@ export class NavPanel extends React.Component<any, INavPanelState> implements Ac
      * Render the view for the navigation menu
      */
     public render() {
+        var circles;
+        if(this.state.friends.length > 0 ) {
+            circles = <a href="#" onClick={ e => this.friends(e) }>Friends <i>{ this.state.friends.length }</i></a>;
+        }
         return (<div id="app-nav">
-            <input type="text" placeholder="Search" onKeyUp={ e => this.search(e) } />
             <ProfileData />
+            <input type="text" placeholder="Search" onKeyUp={ e => this.search(e) } />
             <div id="nav-links">
-                <label>Friends</label>
-                <a href="#" onClick={ e => this.friends(e) }>All <i>{ this.state.friends.length }</i></a>
+                <label>Requests</label>
                 <a href="#" onClick={ e => this.invites(e) }>Invites <i>{ this.state.invites.length }</i></a>
                 <a href="#" onClick={ e => this.requests(e) }>Requests <i>{ this.state.requests.length }</i></a>
-                <label>Circles</label>
+                <label>Circles<a href="#" onClick={ e => this.createCircle(e) }>+</a></label>
+                { circles }
                 <label>Settings</label>
                 <a href="#" onClick={ e => this.logout(e) }>Logout</a>
             </div>
