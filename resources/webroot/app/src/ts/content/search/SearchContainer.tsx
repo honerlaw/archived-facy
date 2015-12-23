@@ -46,25 +46,27 @@ export class SearchContainer extends React.Component<any, ISearchContainerState>
         return (<div>
             <div id="search-result-container">
                 { resultLabel }
-                { this.getLabel('users', this.state.users) }
-                { this.state.users.map(function(user) {
-                    return <UserBox model={user} />
-                }) }
-                <div style={ { clear: "both" } }></div>
-                { this.getLabel('invites', this.state.invites) }
-                { this.state.invites.map(function(invite) {
-                    return <UserBox model={invite} />
-                }) }
-                <div style={ { clear: "both" } }></div>
-                { this.getLabel('requests', this.state.requests) }
-                { this.state.requests.map(function(request) {
-                    return <UserBox model={request} />
-                }) }
-                <div style={ { clear: "both" } }></div>
-                { this.getLabel('friends', this.state.friends) }
-                { this.state.friends.map(function(friend) {
-                    return <UserBox model={friend}/>
-                }) }
+                <div id="inner-search-result-container">
+                    { this.getLabel('users', this.state.users) }
+                    { this.state.users.map(function(user) {
+                        return <UserBox model={user} />
+                    }) }
+                    <div style={ { clear: "both" } }></div>
+                    { this.getLabel('invites', this.state.invites) }
+                    { this.state.invites.map(function(invite) {
+                        return <UserBox model={invite} />
+                    }) }
+                    <div style={ { clear: "both" } }></div>
+                    { this.getLabel('requests', this.state.requests) }
+                    { this.state.requests.map(function(request) {
+                        return <UserBox model={request} />
+                    }) }
+                    <div style={ { clear: "both" } }></div>
+                    { this.getLabel('friends', this.state.friends) }
+                    { this.state.friends.map(function(friend) {
+                        return <UserBox model={friend}/>
+                    }) }
+                </div>
             </div>
         </div>);
     }

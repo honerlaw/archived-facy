@@ -9,9 +9,10 @@ import { IContentPanelState} from "./IContentPanelState";
 
 import { SearchContainer } from "./search/SearchContainer";
 
-import { CreateCircle } from "./page/CreateCircle";
-import { Invites } from "./page/Invites";
-import { Requests } from "./page/Requests";
+import { Home } from "./page/home/Home";
+import { CreateCircle } from "./page/circle/CreateCircle";
+import { Invites } from "./page/request/Invites";
+import { Requests } from "./page/request/Requests";
 
 /**
  * Handles displaying the different types of content correctly
@@ -21,7 +22,7 @@ export class ContentPanel extends React.Component<any, IContentPanelState> imple
     constructor(props : any) {
         super(props);
         this.state = {
-            pageData: new PageData('')
+            pageData: new PageData("home")
         };
     }
 
@@ -42,6 +43,8 @@ export class ContentPanel extends React.Component<any, IContentPanelState> imple
 
     private getPage(pageName) {
         switch(pageName) {
+            case 'home':
+                return <Home />;
             case 'createCircle':
                 return <CreateCircle data={this.state.pageData.getData()} />;
             case 'invites':

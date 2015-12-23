@@ -1,19 +1,19 @@
 
-import { Action } from "../../action/Action";
-import { ActionListener } from "../../action/ActionListener";
-import { ActionDispatcher } from "../../action/ActionDispatcher";
-import { RefreshFriendRequestsAction } from "../../action/impl/RefreshFriendRequestsAction";
+import { Action } from "../../../action/Action";
+import { ActionListener } from "../../../action/ActionListener";
+import { ActionDispatcher } from "../../../action/ActionDispatcher";
+import { RefreshFriendRequestsAction } from "../../../action/impl/RefreshFriendRequestsAction";
 
-import { IPageProps } from "./IPageProps";
+import { IPageProps } from "../IPageProps";
 import { IInvitesRequestsState } from "./IInvitesRequestsState";
+import { UserBox } from "../../search/user/UserBox";
 
 export class Requests extends React.Component<IPageProps, IInvitesRequestsState> implements ActionListener {
 
     constructor(props: IPageProps) {
         super(props);
         this.state = {
-            requests: [],
-            invites: []
+            requests: props.data
         };
     }
 
@@ -32,7 +32,12 @@ export class Requests extends React.Component<IPageProps, IInvitesRequestsState>
     }
 
     public render() {
-        return (<div>request page { this.state.requests.length }</div>);
+        return (<div>
+            <h1>Requests</h1>
+            { this.state.requests.map(function(request) {
+                return <UserBox model={request} />;
+            }) }
+        </div>);
     }
 
 }

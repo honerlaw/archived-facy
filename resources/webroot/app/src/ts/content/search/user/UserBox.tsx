@@ -43,45 +43,50 @@ export class UserBox extends React.Component<IUserBoxProps, IUserBoxState> {
      * Handles the various options for each type of user.
      */
     private option(event) {
-        switch(event.target.value) {
-            case 'send':
+        switch($(event.target).attr('value')) {
+            case 'send': // send a friend request
                 FriendRequest.create(this.props.model.getID(), function(request: FriendRequest) {
                     this.props.model = request;
                     this.setState({
                         type: 'request'
                     });
+                    AppData.getUser().getFriendRequests();
                 }.bind(this));
                 break;
-            case 'remove':
+            case 'remove': // remove a friend
                 this.props.model.remove(function(user: User) {
                     this.props.model = user;
                     this.setState({
                         type: 'user'
                     });
+                    AppData.getUser().getFriends();
                 }.bind(this));
                 break;
-            case 'revoke':
+            case 'revoke': // revoke a friend request
                 this.props.model.revoke(function(user: User) {
                     this.props.model = user;
                     this.setState({
                         type: 'user'
                     });
+                    AppData.getUser().getFriendRequests();
                 }.bind(this));
                 break;
-            case 'accept':
+            case 'accept': // accept a friend request
                 this.props.model.accept(function(friend: Friend) {
                     this.props.model = friend;
                     this.setState({
                         type: 'friend'
                     });
+                    AppData.getUser().getFriendRequests();
                 }.bind(this));
                 break;
-            case 'deny':
+            case 'deny': // deny a friend request
                 this.props.model.deny(function(user: User) {
                     this.props.model = user;
                     this.setState({
                         type: 'user'
                     });
+                    AppData.getUser().getFriendRequests();
                 }.bind(this));
                 break;
         }
@@ -128,8 +133,12 @@ export class UserBox extends React.Component<IUserBoxProps, IUserBoxState> {
         return (<div className="col-md-12 content-user-box">
             <div className="profile-picture" style={ style }></div>
             <div className="name">{ data.username }</div>
-            <div className="options">
-                <UserBoxOptions type={this.state.type} option={ e => this.option(e) }/>
+            <div className="type">
+                { this.state.type }
+                <div className="option-container">
+                    <i className="ion-gear-b"></i>
+                    <UserBoxOptions type={this.state.type} option={ e => this.option(e) }/>
+                </div>
             </div>
         </div>);
     }

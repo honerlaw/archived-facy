@@ -1,5 +1,5 @@
 
-import { FriendRequest } from "../../data/model/FriendRequest";
+import { FriendRequest } from "../../../data/model/FriendRequest";
 
 export interface IInvitesRequestsState {
     invites?: Array<FriendRequest>,

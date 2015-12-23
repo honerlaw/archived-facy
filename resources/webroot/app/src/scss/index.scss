@@ -1,13 +1,23 @@
-$blue: #2980b9;
-$dark-blue: #2c3e50;
+
+/** http://www.colourlovers.com/palette/376594/Chicanery **/
+$lightest: #5FB86B;
+$lighter: #3C9949;
+$middle: #008748;
+$darker: #03484C;
+$darkest: #1C232E;
+
+$break-point: 768px;
+$menu-width: 165px;
 
 @mixin transition($transition) {
     -webkit-transition: $transition;
     transition: $transition;
 }
 
-body {
+html, body, .app {
     background-color: #fafafa;
+    height: 100%;
+    width: 100%;
 }
 
 label {
@@ -15,6 +25,7 @@ label {
     font-weight: normal;
     font-size: 1rem;
     text-transform: uppercase;
+
 }
 
 input {
@@ -27,6 +38,7 @@ input {
     margin: 0 0 .5rem 0;
     width: 100%;
     border-radius: .2rem;
+    outline: none;
     &[type="submit"] {
         width: auto;
         float: right;
@@ -65,22 +77,56 @@ footer {
 }
 
 #app-page {
-    width: 768px;
+    position: relative;
+    width: $break-point;
     margin: 0 auto;
+    height: 100%;
+    overflow: hidden;
+    @media screen and (max-width: 768px) {
+        width: 100%;
+    }
     #app-content {
-        width: calc(100% - 195px);
+        width: calc(100% - 215px);
         min-height: 1px;
         float: left;
-        margin: 0 10px;
+        margin: 0 20px;
+        @media screen and (max-width: 768px) {
+            width: 100%;
+        }
+    }
+    i#nav-button {
+        display: none;
+        text-align: right;
+        @media screen and (max-width: 768px) {
+            display: block;
+        }
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        padding: 0 1rem;
+        font-size: 2.3rem;
+        color: $middle;
+        z-index: 101;
+        &:hover {
+            cursor: pointer;
+        }
     }
     #app-nav {
         margin-top: 1rem;
         width: 175px;
+        padding: 5px;
         float: left;
+        @media screen and (max-width: 768px) {
+            position: absolute;
+            right: -100%;
+            top: 0px;
+            z-index: 100;
+            @include transition(right 200ms ease-in-out);
+        }
         #profile-picture {
             position: relative;
-            width: 175px;
-            height: 175px;
+            width: $menu-width;
+            height: $menu-width;
             background-color: #efefef;
             margin: 4rem 0 4rem 0;
             border-radius: 50%;
@@ -96,14 +142,12 @@ footer {
                 font-size: 1rem;
                 text-transform: lowercase;
                 color: white;
-                background-color: $dark-blue;
+                background-color: rgba(0, 0, 0, .5);
                 padding: .3rem;
                 border-radius: .2rem;
-                opacity: .5;
                 @include transition(opacity 200ms ease-in-out);
                 &:hover {
                     cursor: pointer;
-                    opacity: 1;
                 }
             }
         }
@@ -135,6 +179,7 @@ footer {
                 margin: 0;
                 text-transform: lowercase;
                 font-size: 1.2rem;
+                color: $middle;
             }
         }
     }
@@ -153,15 +198,17 @@ footer {
 #search-result-container {
     width: 100%;
     label {
-        margin: .5rem 0 0 0;
+        margin: .5rem 0 .5rem 0;
         padding: .5rem;
         color: white;
         background-color: transparent;
-        border-bottom: 1px dashed #afafaf;
         border-radius: .2rem;
         overflow: hidden;
         color: black;
+        background-color: #26A65B;
+        color: white;
         &#search-result-label {
+            color: black;
             padding: 1rem .5rem;
             background-color: transparent;
             border-bottom: none;
@@ -174,53 +221,74 @@ footer {
             }
         }
     }
-    .content-user-box {
-        background-color: white;
-        margin: .5rem 0 0 0;
-        overflow: hidden;
+    #inner-search-result-container {
+        margin: 0 3rem;
+    }
+}
+
+.content-user-box {
+    width: 20%;
+    .profile-picture {
+        width: 50px;
         height: 50px;
-        line-height: 50px;
-        margin-bottom: 1px;
-        border-radius: .2rem;
-        .profile-picture {
-            height: 50px;
-            width: 50px;
-            background-color: #efefef;
-            overflow: hidden;
-            float: left;
-            background-size: cover;
-            background-position: center;
-        }
-        .name {
-            height: 50px;
-            line-height: 50px;
-            width: auto;
-            float: left;
-            text-transform: uppercase;
-            text-align: center;
-            font-size: 1rem;
-            margin-left: 1rem;
-        }
-        .options {
-            height: 50px;
-            line-height: 50px;
-            float: right;
-            width: auto;
+        background-color: #efefef;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 auto;
+    }
+    .name {
+        text-align: center;
+        text-transform: uppercase;
+        font-size: 1rem;
+        margin: .5rem 0;
+    }
+    .type {
+        font-size: 1rem;
+        text-transform: lowercase;
+        font-style: italic;
+        text-align: left;
+        line-height: 2rem;
+        height: 2rem;
+        .option-container {
+            font-style: normal;
+            display: inline-block;
             position: relative;
-            select {
-                height: auto;
+            float: right;
+            i {
+                font-size: 1.8rem;
+                color: $darker;
+            }
+            &:hover {
+                cursor: pointer;
+            }
+            &:hover > .options {
+                display: block;
+            }
+            .options {
                 line-height: normal;
-                -webkit-appearance: none;
-                appearance: none;
-                background-color: $blue;
-                color: white;
-                border: none;
-                outline: none;
-                padding: .3rem;
-                text-transform: uppercase;
-                font-size: 1rem;
+                height: auto;
+                float: left;
+                position: absolute;
+                left: 50%;
+                top: 100%;
+                -webkit-transform: translateX(-50%);
+                transform: translateX(-50%);
+                background-color: $lighter;
+                z-index: 500;
+                width: auto;
+                font-size: 1.1rem;
+                display: none;
                 border-radius: .2rem;
                 overflow: hidden;
+                box-shadow: 0 1px 2px #afafaf;
+                div {
+                    white-space: nowrap;
+                    color: white !important;
+                    padding: .5rem;
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
             }
         }
     }
@@ -230,6 +298,7 @@ footer {
     margin: 3rem;
     h1 {
         margin: 3rem 0;
+        color: $darkest;
     }
     label {
         margin: .5rem 0;
@@ -246,7 +315,7 @@ footer {
         &[type="button"] {
             float: right;
             width: auto;
-            background-color: $dark-blue;
+            background-color: $darkest;
             color: white;
             font-size: 1.1rem;
             text-transform: lowercase;

@@ -1,14 +1,9 @@
 
-import { IPageProps } from "./IPageProps";
-import { AppData } from "../../data/AppData";
-import { Friend } from "../../data/model/Friend";
-import { Circle } from "../../data/model/Circle";
-
-interface ICreateCircleState {
-    title?: string,
-    description?: string,
-    friends?: Array<Friend>
-}
+import { IPageProps } from "../IPageProps";
+import { AppData } from "../../../data/AppData";
+import { Friend } from "../../../data/model/Friend";
+import { Circle } from "../../../data/model/Circle";
+import { ICreateCircleState } from "./ICreateCircleState";
 
 export class CreateCircle extends React.Component<IPageProps, ICreateCircleState> {
 

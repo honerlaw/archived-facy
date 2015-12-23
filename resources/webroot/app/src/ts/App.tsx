@@ -40,9 +40,19 @@ class App extends React.Component<IAppProps, IAppState> implements ActionListene
         ActionDispatcher.deregister(this);
     }
 
+    private openNav(event) {
+        event.preventDefault();
+        if(parseInt($('#app-nav').css('right')) === 0) {
+            $('#app-nav').css({ right : '-100%' });
+        } else {
+            $('#app-nav').css({ right : '0px' });
+        }
+    }
+
     public render() {
         if(this.state.isLoggedIn) {
             return (<div id="app-page">
+                <i id="nav-button" className="ion-android-menu" onClick={ e => this.openNav(e) }></i>
                 <ContentPanel />
                 <NavPanel />
                 <footer>{ '\u00A9 2015 honerlaw.io' }</footer>
@@ -62,7 +72,7 @@ class App extends React.Component<IAppProps, IAppState> implements ActionListene
             this.setState(result);
         }
     }
-    
+
 
 }
 
